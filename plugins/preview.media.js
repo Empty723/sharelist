@@ -16,7 +16,7 @@ module.exports = ({getSource , getPluginOption , setPluginOption , getConfig}) =
 
   let videoFormatOption = getPluginOption(videoFormatKey) || {};
   let videoPlayerOption = getPluginOption(videoPlayerKey) || {};
-  let videoFormat = 'mp4,ogg,webm,mpeg,m4v'
+  let videoFormat = 'mp4,ogg,webm,mpeg,m4v,mkv'
   let videoPlayer = 'default'
 
   if( videoFormatOption.value ){
@@ -42,6 +42,7 @@ module.exports = ({getSource , getPluginOption , setPluginOption , getConfig}) =
   const video = async (data , req) => {
     let videoPlayer = (getPluginOption(videoPlayerKey) || {value:'default'}).value;
     let proxyMode = getConfig('proxy_enable') == 1
+    let vlc = `<script>var origin=window.location.origin;window.open('vlc://'+origin+'${convUrl(req)}', '_self');</script>`
     return {
       ...data,
       // body:`
@@ -68,9 +69,9 @@ module.exports = ({getSource , getPluginOption , setPluginOption , getConfig}) =
           }
           var dp = new DPlayer(options);
         </script>
-      ` : `
+      `+vlc : `
         <iframe></iframe><script>var content='<style>video{width:100%;height:100%;background:#000;}body{margin:0;padding:0;}</style><video src="${convUrl(req)}" controls="controls" autoplay="autoplay"></video>';document.querySelector("iframe").contentWindow.document.write(content);</script>
-      `
+      `+vlc
     }
   }
 
